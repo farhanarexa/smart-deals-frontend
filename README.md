@@ -14,3 +14,22 @@ The React Compiler is not enabled on this template because of its impact on dev 
 ## Expanding the ESLint configuration
 
 If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+
+
+```js
+// src/firebase.js
+import { initializeApp } from "firebase/app";
+
+// Load config from environment variables
+const firebaseConfig = {
+  apiKey: import.meta.env.REACT_APP_FIREBASE_API_KEY,
+  authDomain: import.meta.env.REACT_APP_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.REACT_APP_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.REACT_APP_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.REACT_APP_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.REACT_APP_FIREBASE_APP_ID
+};
+
+const app = initializeApp(firebaseConfig);
+export default app;
+```
