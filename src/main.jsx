@@ -29,15 +29,15 @@ const router = createBrowserRouter([
       },
       {
         path: "myProducts",
-        Component: MyProducts,
+        element: <MyProducts />,
       },
       {
         path: "myBids",
-        Component: MyBids,
+        element: <MyBids />,
       },
       {
         path: "createProducts",
-        Component: CreateProduct,
+        element: <CreateProduct />,
       },
       {
         path: "login",
