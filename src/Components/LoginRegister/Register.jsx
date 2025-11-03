@@ -19,12 +19,32 @@ const Register = () => {
     const handleGoogleSignIn = () => {
         signInWithGoogle()
             .then(result => {
-                console.log(result);
+                console.log(result.user);
+
+                const newUser = { 
+                    name: result.user.displayName, 
+                    email: result.user.email,
+                    imgUrl: result.user.photoURL };
+
+                //create user in database
+                fetch('http://localhost:5000/users', {
+                    method: 'POST',
+                    headers: {
+                        'content-type': 'application/json'
+                    },
+                    body: JSON.stringify(newUser)
+                })
+                    .then(res => res.json())
+                    .then(data => {
+                        console.log('data after user saved', data);
+                    });
+
             })
             .catch(error => {
                 console.log(error);
             })
     }
+
 
     return (
         <div className="hero bg-base-200 min-h-screen">
