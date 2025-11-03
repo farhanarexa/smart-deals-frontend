@@ -1,7 +1,31 @@
-import React from 'react';
+import React, { use } from 'react';
 import { FaGoogle } from 'react-icons/fa';
+import { AuthContext } from '../../Contexts/AuthContext';
 
 const Register = () => {
+
+    const { signInWithGoogle } = use(AuthContext);
+
+    const handleRegister = event => {
+        event.preventDefault();
+        const form = event.target;
+        const name = form.name.value;
+        const email = form.email.value;
+        const imgUrl = form.imgUrl.value;
+        const password = form.password.value;
+        console.log(name, email, imgUrl, password);
+    }
+
+    const handleGoogleSignIn = () => {
+        signInWithGoogle()
+            .then(result => {
+                console.log(result);
+            })
+            .catch(error => {
+                console.log(error);
+            })
+    }
+
     return (
         <div className="hero bg-base-200 min-h-screen">
             <div className="hero-content flex-col lg:flex-row-reverse">
@@ -14,7 +38,7 @@ const Register = () => {
                                 Already have an account? <a href="/login" className=" bg-linear-to-r from-[#632EE3] to-[#9F62F2] bg-clip-text text-transparent font-bold hover:underline">Login Now</a>
                             </p>
                         </div>
-                        <form>
+                        <form onSubmit={handleRegister}>
                             <fieldset className="fieldset">
                                 {/* Name */}
                                 <label className="label text-base font-semibold text-[#001931]">Name</label>
@@ -50,7 +74,7 @@ const Register = () => {
                                     <p className="divider text-base font-semibold text-[#001931] mt-6">OR</p>
                                 </div>
 
-                                <button className="btn btn-outline px-7 hover:bg-linear-to-r from-[#632EE3] to-[#9F62F2] border-[#632EE3] font-semibold text-[#632EE3] hover:text-white transition-all text-base"> <FaGoogle size={20}></FaGoogle> Sign Up with Google</button>
+                                <button onClick={handleGoogleSignIn} className="btn btn-outline px-7 hover:bg-linear-to-r from-[#632EE3] to-[#9F62F2] border-[#632EE3] font-semibold text-[#632EE3] hover:text-white transition-all text-base"> <FaGoogle size={20}></FaGoogle> Sign Up with Google</button>
                             </fieldset>
                         </form>
                     </div>
