@@ -2,18 +2,18 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.jsx'
-
 import Root from './Layout/Root.jsx';
 import { createBrowserRouter, RouterProvider } from 'react-router';
-import Home from './components/Home.jsx';
 import AllProducts from './components/AllProducts.jsx';
 import AuthProvider from './Contexts/AuthProvider.jsx';
 import Login from './Components/LoginRegister/Login.jsx';
 import Register from './Components/LoginRegister/Register.jsx';
-import MyProducts from './components/MyProducts.jsx';
 import MyBids from './components/MyBids.jsx';
 import CreateProduct from './Components/CreateProduct.jsx';
 import PrivateRoute from './Components/LoginRegister/PrivateRoute.jsx';
+import ProductDetails from './Components/ProductDetails.jsx';
+import Home from './Components/Home.jsx';
+import MyProducts from './Components/MyProducts.jsx';
 
 const router = createBrowserRouter([
   {
@@ -54,7 +54,11 @@ const router = createBrowserRouter([
         path: "register",
         Component: Register,
       },
-
+      {
+        path: "productDetails/:id",
+        loader: ({ params }) => fetch(`http://localhost:3000/products/${params.id}`),
+        Component: ProductDetails,
+      },
     ],
   },
 ]);
