@@ -15,13 +15,13 @@ const Navbar = () => {
     const links = <>
         <li><NavLink to='/'>Home</NavLink></li>
         <li><NavLink to='/allProducts'>All Products</NavLink></li>
-       {
-        user && <>
-         <li><NavLink to='/myProducts'>My Products</NavLink></li>
-        <li><NavLink to='/myBids'>My Bids</NavLink></li>
-        <li><NavLink to='/createProducts'>Create Products</NavLink></li>
-        </>
-       }
+        {
+            user && <>
+                <li><NavLink to='/myProducts'>My Products</NavLink></li>
+                <li><NavLink to='/myBids'>My Bids</NavLink></li>
+                <li><NavLink to='/createProducts'>Create Products</NavLink></li>
+            </>
+        }
     </>
 
     return (
@@ -46,9 +46,22 @@ const Navbar = () => {
                     </ul>
                 </div>
                 <div className="navbar-end flex gap-2">
-                   <Link to='/login' className="btn bg-transparent text-[#632EE3] border-2 border-[#9F62F2] hover:text-white hover:bg-linear-to-r hover:from-[#632EE3] hover:to-[#9F62F2] px-7 transition-all">Login</Link>
-
-                    <Link to='/register' className="btn bg-linear-to-r from-[#632EE3] to-[#9F62F2] px-7 text-white border-none hover:opacity-90 transition-all">Register</Link>
+                    {user ?
+                        (<button
+                            onClick={handleSignOut}
+                            className="btn bg-linear-to-r from-[#632EE3] to-[#9F62F2] px-7 text-white border-none hover:opacity-90 transition-all"> Logout
+                        </button>
+                        ) : (
+                            <>
+                                <Link to="/login"
+                                    className="btn bg-transparent text-[#632EE3] border-2 border-[#9F62F2] hover:text-white hover:bg-linear-to-r hover:from-[#632EE3] hover:to-[#9F62F2] px-7 transition-all"> Login
+                                </Link>
+                                
+                                <Link to="/register"
+                                    className="btn bg-linear-to-r from-[#632EE3] to-[#9F62F2] px-7 text-white border-none hover:opacity-90 transition-all">Register
+                                </Link>
+                            </>
+                        )}
                 </div>
             </div>
         </div>

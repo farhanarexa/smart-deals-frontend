@@ -13,6 +13,7 @@ import Register from './Components/LoginRegister/Register.jsx';
 import MyProducts from './components/MyProducts.jsx';
 import MyBids from './components/MyBids.jsx';
 import CreateProduct from './Components/CreateProduct.jsx';
+import PrivateRoute from './Components/LoginRegister/PrivateRoute.jsx';
 
 const router = createBrowserRouter([
   {
@@ -28,12 +29,18 @@ const router = createBrowserRouter([
         Component: AllProducts,
       },
       {
-        path: "myProducts",
-        element: <MyProducts />,
+        path: 'myProducts',
+        element: (
+          <PrivateRoute>
+            <MyProducts />
+          </PrivateRoute>
+        )
       },
       {
         path: "myBids",
-        element: <MyBids />,
+        element: (<PrivateRoute>
+          <MyBids />
+        </PrivateRoute>)
       },
       {
         path: "createProducts",

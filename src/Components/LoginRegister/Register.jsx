@@ -1,10 +1,10 @@
-import React, { use } from 'react';
+import React, { useContext } from 'react';  // Added useContext
 import { FaGoogle } from 'react-icons/fa';
 import { AuthContext } from '../../Contexts/AuthContext';
 
 const Register = () => {
 
-    const { signInWithGoogle } = use(AuthContext);
+    const { createUser, signInWithGoogle } = useContext(AuthContext);  // Added this line
 
     const handleRegister = event => {
         event.preventDefault();
@@ -13,7 +13,36 @@ const Register = () => {
         const email = form.email.value;
         const imgUrl = form.imgUrl.value;
         const password = form.password.value;
-        console.log(name, email, imgUrl, password);
+
+        // Firebase Email/Password Registration
+        createUser(email, password)
+            .then(result => {
+                const firebaseUser = result.user;
+
+                // Save user to your backend
+                const newUser = { 
+                    name: name, 
+                    email: firebaseUser.email,
+                    imgUrl: imgUrl || firebaseUser.photoURL || ''
+                };
+
+                return fetch('http://localhost:3000/users', {
+                    method: 'POST',
+                    headers: {
+                        'content-type': 'application/json'
+                    },
+                    body: JSON.stringify(newUser)
+                });
+            })
+            .then(res => res.json())
+            .then(data => {
+                console.log('data after user saved', data);
+                form.reset(); // Optional: clear form
+            })
+            .catch(error => {
+                console.log('Registration error:', error);
+                alert(error.message); // Show Firebase error
+            });
     }
 
     const handleGoogleSignIn = () => {
@@ -24,7 +53,8 @@ const Register = () => {
                 const newUser = { 
                     name: result.user.displayName, 
                     email: result.user.email,
-                    imgUrl: result.user.photoURL };
+                    imgUrl: result.user.photoURL 
+                };
 
                 //create user in database
                 fetch('http://localhost:5000/users', {
@@ -38,13 +68,11 @@ const Register = () => {
                     .then(data => {
                         console.log('data after user saved', data);
                     });
-
             })
             .catch(error => {
                 console.log(error);
             })
     }
-
 
     return (
         <div className="hero bg-base-200 min-h-screen">

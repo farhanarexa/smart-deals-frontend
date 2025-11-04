@@ -1,8 +1,43 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { FaGoogle } from 'react-icons/fa';
+import { AuthContext } from '../../Contexts/AuthContext';
+import { useNavigate } from 'react-router';
 
 const Login = () => {
-    
+
+    const { signInUser, signInWithGoogle } = useContext(AuthContext);
+    const navigate = useNavigate();
+
+    const handleLogin = e => {
+        e.preventDefault();
+        const form = e.target;
+        const email = form.email.value;
+        const password = form.password.value;
+
+        signInUser(email, password)
+            .then(result => {
+                console.log('Logged in →', result.user);
+                form.reset();
+                navigate('/');
+            })
+            .catch(err => {
+                console.error('Login error →', err);
+                alert(err.message);
+            });
+    };
+
+    const handleGoogleLogin = () => {
+        signInWithGoogle()
+            .then(result => {
+                console.log('Google login →', result.user);
+                navigate('/');
+            })
+            .catch(err => {
+                console.error('Google login error →', err);
+                alert(err.message);
+            });
+    };
+
     return (
         <div className="hero bg-base-200 min-h-screen">
             <div className="hero-content flex-col lg:flex-row-reverse">
@@ -11,26 +46,47 @@ const Login = () => {
                     <div className="card-body">
                         <div className="text-center">
                             <h1 className="text-4xl font-bold">Login Now!</h1>
-                            <p className="py-3  font-semibold">
-                                Don't have an account? <a href="/register" className=" bg-linear-to-r from-[#632EE3] to-[#9F62F2] bg-clip-text text-transparent font-bold hover:underline">Register Now</a>
+                            <p className="py-3 font-semibold">
+                                Don't have an account?{' '}
+                                <a href="/register"
+                                    className="bg-linear-to-r from-[#632EE3] to-[#9F62F2] bg-clip-text text-transparent font-bold hover:underline">
+                                    Register Now
+                                </a>
                             </p>
                         </div>
-                        <form>
+
+                        <form onSubmit={handleLogin}>
                             <fieldset className="fieldset">
-                                {/* email */}
+
                                 <label className="label text-base font-semibold text-[#001931]">Email</label>
-                                <input type="email" className="input w-full" placeholder="Email" />
-                                {/* password */}
+                                <input type="email"
+                                    name="email"
+                                    className="input w-full"
+                                    placeholder="Email" required />
+
                                 <label className="label mt-4 text-base font-semibold text-[#001931]">Password</label>
-                                <input type="password" className="input w-full" placeholder="Password" />
+                                <input type="password"
+                                    name="password"
+                                    className="input w-full"
+                                    placeholder="Password" required />
+
                                 <div><a className="link link-hover text-base text-[#001931]">Forgot password?</a></div>
-                                <button className="btn bg-linear-to-r from-[#632EE3] to-[#9F62F2] px-7 text-white border-none hover:opacity-90 transition-all mt-4 text-base">Login</button>
+
+                                <button type="submit"
+                                    className="btn bg-linear-to-r from-[#632EE3] to-[#9F62F2] px-7 text-white border-none hover:opacity-90 transition-all mt-4 text-base">
+                                    Login
+                                </button>
 
                                 <div>
                                     <p className="divider text-base font-semibold text-[#001931] mt-6">OR</p>
                                 </div>
 
-                                <button className="btn btn-outline px-7 hover:bg-linear-to-r from-[#632EE3] to-[#9F62F2] border-[#632EE3] font-semibold text-[#632EE3] hover:text-white transition-all text-base"> <FaGoogle size={20}></FaGoogle> Sign In with Google</button>
+                                <button type="button"
+                                    onClick={handleGoogleLogin}
+                                    className="btn btn-outline px-7 hover:bg-linear-to-r from-[#632EE3] to-[#9F62F2] border-[#632EE3] font-semibold text-[#632EE3] hover:text-white transition-all text-base">
+                                    <FaGoogle size={20} /> Sign In with Google
+                                </button>
+
                             </fieldset>
                         </form>
                     </div>
