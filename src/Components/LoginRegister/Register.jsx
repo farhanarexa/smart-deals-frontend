@@ -1,10 +1,10 @@
-import React, { useContext } from 'react';  // Added useContext
+import React, { useContext } from 'react'; 
 import { FaGoogle } from 'react-icons/fa';
 import { AuthContext } from '../../Contexts/AuthContext';
 
 const Register = () => {
 
-    const { createUser, signInWithGoogle } = useContext(AuthContext);  // Added this line
+    const { createUser, signInWithGoogle } = useContext(AuthContext); 
 
     const handleRegister = event => {
         event.preventDefault();
@@ -19,7 +19,7 @@ const Register = () => {
             .then(result => {
                 const firebaseUser = result.user;
 
-                // Save user to your backend
+                // Save user to backend
                 const newUser = { 
                     name: name, 
                     email: firebaseUser.email,
@@ -37,7 +37,7 @@ const Register = () => {
             .then(res => res.json())
             .then(data => {
                 console.log('data after user saved', data);
-                form.reset(); // Optional: clear form
+                form.reset(); //clear form
             })
             .catch(error => {
                 console.log('Registration error:', error);
@@ -53,7 +53,7 @@ const Register = () => {
                 const newUser = { 
                     name: result.user.displayName, 
                     email: result.user.email,
-                    imgUrl: result.user.photoURL 
+                    image: result.user.photoURL 
                 };
 
                 //create user in database

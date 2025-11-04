@@ -18,7 +18,7 @@ const Login = () => {
             .then(result => {
                 console.log('Logged in →', result.user);
                 form.reset();
-                navigate('/');
+                navigate(location.state?.from || '/');
             })
             .catch(err => {
                 console.error('Login error →', err);

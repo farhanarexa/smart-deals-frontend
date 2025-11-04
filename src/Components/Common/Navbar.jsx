@@ -38,7 +38,7 @@ const Navbar = () => {
                             {links}
                         </ul>
                     </div>
-                    <a className="btn btn-ghost text-3xl font-bold">Smart <span className="bg-linear-to-r from-[#632EE3] to-[#9F62F2] bg-clip-text text-transparent">Deals</span></a>
+                    <a href="/" className="text-3xl font-bold">Smart <span className="bg-linear-to-r from-[#632EE3] to-[#9F62F2] bg-clip-text text-transparent">Deals</span></a>
                 </div>
                 <div className="navbar-center hidden lg:flex text-base font-semibold">
                     <ul className="menu menu-horizontal px-1">
@@ -56,7 +56,7 @@ const Navbar = () => {
                                 <Link to="/login"
                                     className="btn bg-transparent text-[#632EE3] border-2 border-[#9F62F2] hover:text-white hover:bg-linear-to-r hover:from-[#632EE3] hover:to-[#9F62F2] px-7 transition-all"> Login
                                 </Link>
-                                
+
                                 <Link to="/register"
                                     className="btn bg-linear-to-r from-[#632EE3] to-[#9F62F2] px-7 text-white border-none hover:opacity-90 transition-all">Register
                                 </Link>
