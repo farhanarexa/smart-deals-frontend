@@ -1,16 +1,70 @@
-import React, { useRef } from 'react';
+import React, { use, useEffect, useRef, useState } from 'react';
 import { FaArrowLeft } from 'react-icons/fa';
 import { useLoaderData, useNavigate } from 'react-router';
+import { AuthContext } from '../Contexts/AuthContext';
+import Swal from 'sweetalert2';
 
 const ProductDetails = () => {
     const product = useLoaderData();
+    const [bids, setBids] = useState([]);
     const navigate = useNavigate();
+    const { user } = use(AuthContext);
+
+    useEffect(() => {
+        fetch(`http://localhost:3000/products/bids/${product._id}`)
+            .then(res => res.json())
+            .then(data => {
+                console.log('bids for this product', data);
+                setBids(data);
+            })
+    }, [ product._id ]);
 
     const bidModalRef = useRef(null);
 
     const handleBidModalOpen = () => {
         bidModalRef.current.showModal();
     };
+
+    const handleBidSubmit = (event) => {
+        event.preventDefault();
+        const form = event.target;
+        const name = form.name.value;
+        const email = form.email.value;
+        const bid = form.bid.value;
+        console.log(name, email, bid);
+
+        const newBid = {
+            product: product._id,
+            buyer_name: name,
+            buyer_email: email,
+            buyer_img: user?.photoURL,
+            bid_price: bid,
+            status: 'pending'
+        };
+
+        fetch('http://localhost:3000/bids', {
+            method: 'POST',
+            headers: {
+                'content-type': 'application/json'
+            },
+            body: JSON.stringify(newBid)
+        })
+            .then(res => res.json())
+            .then(data => {
+                console.log("after bid", data);
+                if (data.insertedId) {
+                    bidModalRef.current.close();
+                    Swal.fire({
+                        position: "top-end",
+                        icon: "success",
+                        title: "Your bid has been placed successfully",
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+                }
+            });
+
+    }
 
     console.log(product);
     return (
@@ -69,70 +123,79 @@ const ProductDetails = () => {
                             <div className="modal-box p-6">
                                 <h3 className="font-bold text-xl text-center mb-6 text-purple-700">Give Seller The Best Offer</h3>
 
-                                <form className="space-y-5">
-                                    {/* Buyer Name */}
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-1">Buyer Name</label>
-                                        <input
-                                            type="text"
-                                            placeholder="Your name"
-                                            className="input input-bordered w-full h-11 rounded-lg"
-                                        />
-                                    </div>
-
-                                    {/* Buyer Email */}
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-1">Buyer Email</label>
-                                        <input
-                                            type="email"
-                                            placeholder="Your Email"
-                                            className="input input-bordered w-full h-11 rounded-lg"
-                                        />
-                                    </div>
-
-                                    {/* Buyer Image URL */}
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-1">Buyer Image URL</label>
-                                        <input
-                                            type="url"
-                                            placeholder="https://...your_img_url"
-                                            className="input input-bordered w-full h-11 rounded-lg"
-                                        />
-                                    </div>
-
-                                    {/* Place your Price */}
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-1">Place your Price</label>
-                                        <input
-                                            type="text"
-                                            placeholder="e.g. Artisan Roasters"
-                                            className="input input-bordered w-full h-11 rounded-lg"
-                                        />
-                                    </div>
-
-                                    {/* Contact Info */}
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-1">Contact Info</label>
-                                        <input
-                                            type="text"
-                                            placeholder="e.g. +1-555-1234"
-                                            className="input input-bordered w-full h-11 rounded-lg"
-                                        />
-                                    </div>
-
-                                    {/* Footer: Buttons + Date */}
-                                    <div className="flex items-center justify-between mt-8">
-                                        <p className="text-xs text-gray-500">Posted: 10/19/2024</p>
-
-                                        <div className="modal-action flex gap-3">
-                                            <form method="dialog">
-                                                <button className="btn btn-sm rounded-lg bg-transparent text-[#632EE3] border-2 border-[#9F62F2] hover:text-white hover:bg-linear-to-r hover:from-[#632EE3] hover:to-[#9F62F2] px-3 transition-all">Cancel</button>
-                                            </form>
-                                            <button className="btn btn-sm rounded-lg bg-linear-to-r from-[#632EE3] to-[#9F62F2] px-3 text-white border-none hover:opacity-90 transition-all">
-                                                Submit Bid
-                                            </button>
+                                <form onSubmit={handleBidSubmit} className="space-y-5">
+                                    <fieldset>
+                                        {/* Buyer Name */}
+                                        <div className='mb-2'>
+                                            <label className="block text-sm font-medium text-gray-700 mb-1">Buyer Name</label>
+                                            <input
+                                                type="text"
+                                                name='name'
+                                                readOnly
+                                                defaultValue={user?.displayName}
+                                                className="input input-bordered w-full h-11 rounded-lg"
+                                            />
                                         </div>
-                                    </div>
+
+                                        {/* Buyer Email */}
+                                        <div className='mb-2'>
+                                            <label className="block text-sm font-medium text-gray-700 mb-1">Buyer Email</label>
+                                            <input
+                                                type="email"
+                                                name='email'
+                                                readOnly
+                                                defaultValue={user?.email }
+                                                className="input input-bordered w-full h-11 rounded-lg"
+                                            />
+                                        </div>
+
+                                        {/* Buyer Image URL */}
+                                        <div className='mb-2'>
+                                            <label className="block text-sm font-medium text-gray-700 mb-1">Buyer Image URL</label>
+                                            <input
+                                                type="url"
+                                                name='imgUrl'
+                                                placeholder="https://...your_img_url"
+                                                className="input input-bordered w-full h-11 rounded-lg"
+                                            />
+                                        </div>
+
+                                        {/* Contact Info */}
+                                        <div className='mb-2'>
+                                            <label className="block text-sm font-medium text-gray-700 mb-1">Contact Info</label>
+                                            <input
+                                                type="text"
+                                                name='contact'
+                                                placeholder="e.g. +1-555-1234"
+                                                className="input input-bordered w-full h-11 rounded-lg"
+                                            />
+                                        </div>
+
+                                        {/* Place your Bid */}
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700 mb-1">Place your Bid</label>
+                                            <input
+                                                type="text"
+                                                name='bid'
+                                                placeholder="e.g. Artisan Roasters"
+                                                className="input input-bordered w-full h-11 rounded-lg"
+                                            />
+                                        </div>
+
+                                        {/* Footer: Buttons + Date */}
+                                        <div className="flex items-center justify-between mt-8">
+                                            <p className="text-xs text-gray-500">Posted: 10/19/2024</p>
+
+                                            <div className="modal-action flex gap-3">
+                                                <form method="dialog">
+                                                    <button className="btn btn-sm rounded-lg bg-transparent text-[#632EE3] border-2 border-[#9F62F2] hover:text-white hover:bg-linear-to-r hover:from-[#632EE3] hover:to-[#9F62F2] px-3 transition-all">Cancel</button>
+                                                </form>
+                                                <button className="btn btn-sm rounded-lg bg-linear-to-r from-[#632EE3] to-[#9F62F2] px-3 text-white border-none hover:opacity-90 transition-all">
+                                                    Submit Bid
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </fieldset>
                                 </form>
                             </div>
                         </dialog>
@@ -143,7 +206,7 @@ const ProductDetails = () => {
 
                 {/* bids for products */}
                 <div>
-
+                    <h3 className="font-bold text-2xl  mt-20 ">Bids For This Product: <span className='text-purple-700'>{bids.length}</span></h3>
                 </div>
             </div>
         </div>
