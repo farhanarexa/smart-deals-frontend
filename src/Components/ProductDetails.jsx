@@ -17,7 +17,7 @@ const ProductDetails = () => {
                 console.log('bids for this product', data);
                 setBids(data);
             })
-    }, [ product._id ]);
+    }, [product._id]);
 
     const bidModalRef = useRef(null);
 
@@ -31,13 +31,12 @@ const ProductDetails = () => {
         const name = form.name.value;
         const email = form.email.value;
         const bid = form.bid.value;
-        console.log(name, email, bid);
 
         const newBid = {
             product: product._id,
             buyer_name: name,
             buyer_email: email,
-            buyer_img: user?.photoURL,
+            buyer_img: user?.photoURL || '',
             bid_price: bid,
             status: 'pending'
         };
@@ -51,7 +50,6 @@ const ProductDetails = () => {
         })
             .then(res => res.json())
             .then(data => {
-                console.log("after bid", data);
                 if (data.insertedId) {
                     bidModalRef.current.close();
                     Swal.fire({
@@ -61,10 +59,21 @@ const ProductDetails = () => {
                         showConfirmButton: false,
                         timer: 1500
                     });
-                }
-            });
 
-    }
+                    // Refetch bids to ensure consistency
+                    fetch(`http://localhost:3000/products/bids/${product._id}`)
+                        .then(res => res.json())
+                        .then(freshBids => {
+                            const sorted = freshBids.sort((a, b) => b.bid_price - a.bid_price);
+                            setBids(sorted);
+                        });
+                }
+            })
+            .catch(err => {
+                console.error("Bid submission error:", err);
+                Swal.fire("Error", "Failed to place bid", "error");
+            });
+    };
 
     console.log(product);
     return (
@@ -144,7 +153,7 @@ const ProductDetails = () => {
                                                 type="email"
                                                 name='email'
                                                 readOnly
-                                                defaultValue={user?.email }
+                                                defaultValue={user?.email}
                                                 className="input input-bordered w-full h-11 rounded-lg"
                                             />
                                         </div>
@@ -207,6 +216,53 @@ const ProductDetails = () => {
                 {/* bids for products */}
                 <div>
                     <h3 className="font-bold text-2xl  mt-20 ">Bids For This Product: <span className='text-purple-700'>{bids.length}</span></h3>
+
+                    <div className="overflow-x-auto">
+                        <table className="table">
+                            {/* head */}
+                            <thead>
+                                <tr>
+                                    <th>SL No.</th>
+                                    <th>Buyer Name</th>
+                                    <th>Buyer Email</th>
+                                    <th>Bid Price</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {/* row 1 */}
+
+
+                                {
+                                    bids.map((bid, index) => <tr>
+                                        <th> {index + 1} </th>
+                                        <td>
+                                            <div className="flex items-center gap-3">
+                                                <div className="avatar">
+                                                    <div className="mask mask-squircle h-12 w-12">
+                                                        <img
+                                                            src="https://img.daisyui.com/images/profile/demo/2@94.webp"
+                                                            alt="Avatar Tailwind CSS Component" />
+                                                    </div>
+                                                </div>
+                                                <div>
+                                                    <div className="font-bold">{bid.buyer_name}</div>
+                                                    <div className="text-sm opacity-50">United States</div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            {bid.buyer_email}
+                                        </td>
+                                        <td>{bid.bid_price}</td>
+                                        <th>
+                                            <button className="btn btn-ghost btn-xs">details</button>
+                                        </th>
+                                    </tr>)
+                                }
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
